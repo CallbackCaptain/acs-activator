@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "ACS Activator",
+  "version": "1.0.0",
+  "description": "Активация сервисов ACS напрямую по CPE ID",
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "ACS Activator"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "host_permissions": [
+    "http://acs.sibir.rt.ru/*",
+    "http://acs.sibir.rt.ru:9673/*",
+    "http://lo.sibir.rt.ru/*",
+    "http://10.143.52.18:3012/*"
+  ],
+  "permissions": ["scripting", "tabs"],
+  "content_security_policy": {
+    "extension_pages": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self' http://acs.sibir.rt.ru:9673 http://10.143.52.18:3012"
+  }
+}

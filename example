@@ -1,0 +1,14 @@
+{
+    "NewServiceIdentifiers": {
+        "cpeid": "0"
+    },
+    "ServiceIdentifiers": {
+        "cpeid": "*наш CPE*"
+    },
+    "CommandOptions": {
+        "Restore": true,
+        "Force": true
+    }
+}
+
+http://acs.sibir.rt.ru:9673/live/SupportPortal/UI/CPEManager/AXServiceStorage/Interfaces/rest/v1/action//transferServices

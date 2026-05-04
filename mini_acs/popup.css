@@ -1,0 +1,328 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  background: #1e1e2e;
+  color: #cdd6f4;
+  min-width: 320px;
+}
+
+.container {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #cba6f7;
+  letter-spacing: 0.02em;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field label {
+  font-size: 12px;
+  color: #a6adc8;
+  font-weight: 500;
+}
+
+.field-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.btn-inline {
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  background: transparent;
+  color: #6c7086;
+  border: 1px solid #45475a;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: color 0.12s, border-color 0.12s;
+}
+
+.btn-inline:hover:not(:disabled) {
+  background: transparent;
+  color: #cdd6f4;
+  border-color: #6c7086;
+}
+
+input[type="text"],
+select {
+  width: 100%;
+  padding: 8px 10px;
+  background: #313244;
+  border: 1px solid #45475a;
+  border-radius: 6px;
+  color: #cdd6f4;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+input[type="text"]:focus,
+select:focus {
+  border-color: #cba6f7;
+}
+
+select option {
+  background: #313244;
+}
+
+button {
+  padding: 9px 16px;
+  background: #cba6f7;
+  color: #1e1e2e;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+button:hover:not(:disabled) {
+  background: #b4befe;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.status {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.status.success {
+  background: rgba(166, 227, 161, 0.15);
+  color: #a6e3a1;
+  border: 1px solid rgba(166, 227, 161, 0.3);
+}
+
+.status.error {
+  background: rgba(243, 139, 168, 0.15);
+  color: #f38ba8;
+  border: 1px solid rgba(243, 139, 168, 0.3);
+}
+
+.status.loading {
+  background: rgba(137, 180, 250, 0.15);
+  color: #89b4fa;
+  border: 1px solid rgba(137, 180, 250, 0.3);
+}
+
+.hidden {
+  display: none !important;
+}
+
+details {
+  background: #181825;
+  border-radius: 6px;
+  border: 1px solid #313244;
+}
+
+details summary {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 12px;
+  color: #a6adc8;
+  user-select: none;
+  list-style: none;
+}
+
+details summary::-webkit-details-marker {
+  display: none;
+}
+
+details summary::before {
+  content: "+ ";
+}
+
+details[open] summary::before {
+  content: "- ";
+}
+
+details summary:hover {
+  color: #cdd6f4;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #313244;
+  margin: 4px 0;
+}
+
+.section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #89dceb;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.btn-secondary {
+  background: #313244;
+  color: #89dceb;
+  border: 1px solid #45475a;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #45475a;
+}
+
+.btn-esm-activate {
+  background: #a6e3a1;
+  color: #1e1e2e;
+  border: none;
+}
+
+.btn-esm-activate:hover:not(:disabled) {
+  background: #94d68e;
+}
+
+pre#responseBody,
+pre#esmResponseBody {
+  padding: 8px 12px;
+  font-size: 11px;
+  color: #a6adc8;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 150px;
+  overflow-y: auto;
+  border-top: 1px solid #313244;
+}
+
+/* Блок опций ESM (технология, порты) */
+.esm-opts {
+  background: #181825;
+  border: 1px solid #313244;
+  border-radius: 6px;
+  padding: 9px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.opts-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.opts-label {
+  flex-shrink: 0;
+  width: 70px;
+  font-size: 11px;
+  color: #6c7086;
+  font-weight: 500;
+}
+
+.seg-ctrl {
+  display: flex;
+  gap: 2px;
+  background: #313244;
+  border-radius: 5px;
+  padding: 2px;
+}
+
+.seg-btn {
+  padding: 4px 11px;
+  font-size: 12px;
+  font-weight: 500;
+  background: transparent;
+  color: #6c7086;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.seg-btn:hover:not(:disabled):not(.active) {
+  background: transparent;
+  color: #cdd6f4;
+}
+
+.seg-btn.active {
+  background: #45475a;
+  color: #cdd6f4;
+}
+
+.opts-input {
+  flex: 1;
+  width: auto;
+  padding: 5px 8px;
+  font-size: 12px;
+}
+
+/* Карточка абонента (данные из getMesuServiceMsc) */
+.info-card {
+  background: #181825;
+  border: 1px solid #313244;
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.info-row {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.info-label {
+  flex-shrink: 0;
+  width: 70px;
+  color: #6c7086;
+  font-weight: 500;
+}
+
+.info-row > span:last-child {
+  color: #cdd6f4;
+  word-break: break-all;
+}
+
+.cpe-model {
+  color: #a6adc8;
+  margin-right: 6px;
+}
+
+.cpe-tag {
+  display: inline-block;
+  padding: 2px 7px;
+  margin-right: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  background: #313244;
+  color: #89b4fa;
+  border: 1px solid #45475a;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.cpe-tag:hover:not(:disabled) {
+  background: #45475a;
+  color: #cdd6f4;
+}

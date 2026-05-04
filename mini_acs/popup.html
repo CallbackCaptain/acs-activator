@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ACS Activator</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">ACS Activator</h1>
+
+    <div class="section-title">Активировать ЦСМ</div>
+
+    <div class="field">
+      <label for="cpeId">CPE ID</label>
+      <input
+        type="text"
+        id="cpeId"
+        placeholder="например: 454C545225516E19"
+        autocomplete="off"
+        spellcheck="false"
+      />
+    </div>
+
+    <button id="activateBtn" type="button">Активировать ЦСМ</button>
+
+    <div id="status" class="status hidden" role="status" aria-live="polite"></div>
+
+    <details id="responseDetails" class="hidden">
+      <summary>Ответ сервера</summary>
+      <pre id="responseBody"></pre>
+    </details>
+
+    <hr class="divider" />
+
+    <div class="section-title">ЕСМ — проверка сервисов</div>
+
+    <div class="field">
+      <div class="field-label-row">
+        <label for="vnInput">VN (прямой провод)</label>
+        <button id="vnFromTabBtn" type="button" class="btn-inline" title="Получить VN из URL вкладки">из вкладки</button>
+      </div>
+      <input
+        type="text"
+        id="vnInput"
+        placeholder="например: 3017549880"
+        autocomplete="off"
+        spellcheck="false"
+        inputmode="numeric"
+      />
+    </div>
+
+    <div class="esm-opts">
+      <div class="opts-row">
+        <span class="opts-label">LAN портов</span>
+        <div class="seg-ctrl" id="portsCtrl">
+          <button type="button" class="seg-btn" data-value="2">2</button>
+          <button type="button" class="seg-btn" data-value="3">3</button>
+          <button type="button" class="seg-btn active" data-value="4">4</button>
+        </div>
+      </div>
+      <div class="opts-row hidden" id="fttbVlanRow">
+        <span class="opts-label">sVLAN ТВ</span>
+        <input type="text" id="fttbTvVlan" class="opts-input" placeholder="например: 100" autocomplete="off" spellcheck="false" inputmode="numeric" />
+      </div>
+    </div>
+
+    <button id="checkEsmBtn" type="button" class="btn-secondary" data-mode="check">Проверить сервисы ESM</button>
+
+    <div id="esmStatus" class="status hidden" role="status" aria-live="polite"></div>
+
+    <div id="mscInfoCard" class="info-card hidden">
+      <div class="info-row">
+        <span class="info-label">Абонент</span>
+        <span id="mscClientName"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Технология</span>
+        <span id="mscTech"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Branch</span>
+        <span id="mscBranch"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">PPPoE</span>
+        <span id="mscPppoe"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Лицевой</span>
+        <span id="mscAccount"></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Адрес</span>
+        <span id="mscAddress"></span>
+      </div>
+      <div class="info-row" id="mscCpesRow">
+        <span class="info-label">CPE</span>
+        <span id="mscCpes"></span>
+      </div>
+    </div>
+
+    <details id="esmResponseDetails" class="hidden">
+      <summary>Ответ ЕСМ</summary>
+      <pre id="esmResponseBody"></pre>
+    </details>
+  </div>
+
+  <!-- services.js должен идти первым — определяет глобальный массив SERVICES -->
+  <script src="services.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
