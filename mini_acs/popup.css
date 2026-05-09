@@ -134,6 +134,51 @@ button:disabled {
   display: none !important;
 }
 
+.auth-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: #181825;
+  border: 1px solid #313244;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.auth-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #6c7086;
+  flex-shrink: 0;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.auth-dot.ok {
+  background: #a6e3a1;
+  box-shadow: 0 0 6px rgba(166, 227, 161, 0.6);
+}
+
+.auth-dot.fail {
+  background: #f38ba8;
+  box-shadow: 0 0 6px rgba(243, 139, 168, 0.6);
+}
+
+.auth-label {
+  flex: 1;
+  color: #a6adc8;
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.12s;
+}
+
+.auth-label:hover {
+  opacity: 0.75;
+}
+
+.auth-label.ok   { color: #a6e3a1; }
+.auth-label.fail { color: #f38ba8; }
+
 details {
   background: #181825;
   border-radius: 6px;

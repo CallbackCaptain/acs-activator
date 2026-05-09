@@ -24,6 +24,20 @@
   const fttbVlanRow     = document.getElementById("fttbVlanRow");
   const fttbTvVlanInput = document.getElementById("fttbTvVlan");
 
+  // Auth indicator
+  const authDot      = document.getElementById("authDot");
+  const authLabel    = document.getElementById("authLabel");
+  const authLoginBtn = document.getElementById("authLoginBtn");
+
+  var PORTAL_URL_PATTERN  = "http://lo.sibir.rt.ru/*";
+
+  // ACS LEGACYUI — открытие этой страницы триггерит переавторизацию в ACS.
+  var ACS_LEGACY_UI_URL = "http://acs.sibir.rt.ru:9673/live/SupportPortal/LEGACYUI/";
+  // Реальный API-эндпоинт для проверки сессии: разлогиненному вернёт 401 или
+  // редирект/HTML логин-страницы; авторизованному — JSON/CORS-ответ.
+  var ACS_AUTH_PROBE_URL =
+    "http://acs.sibir.rt.ru:9673/live/SupportPortal/UI/CPEManager/AXServiceStorage/Interfaces/rest/v1/action//transferServices";
+
   var selectedTech  = "gpon"; // определяется автоматически из techname в ответе MSC
   var selectedPorts = 4;      // 2 | 3 | 4
 
@@ -326,42 +340,128 @@
     mscInfoCard.classList.remove("hidden");
   }
 
-  // Читает JWT из localStorage активной вкладки.
+  // Извлекает JWT из localStorage указанной вкладки.
+  function readJwtFromTabId(tabId) {
+    return new Promise(function (resolve) {
+      chrome.scripting.executeScript(
+        {
+          target: { tabId: tabId },
+          func: function (keys) {
+            for (var i = 0; i < keys.length; i++) {
+              var val = localStorage.getItem(keys[i]);
+              if (val && val.length > 20) return val;
+            }
+            for (var j = 0; j < localStorage.length; j++) {
+              var k = localStorage.key(j);
+              if (k && k.toLowerCase().indexOf("token") !== -1) {
+                var v = localStorage.getItem(k);
+                if (v && v.length > 20) return v;
+              }
+            }
+            return null;
+          },
+          args: [ESM_TOKEN_KEYS],
+        },
+        function (results) {
+          if (chrome.runtime.lastError || !results || !results[0]) {
+            resolve(null);
+          } else {
+            resolve(results[0].result || null);
+          }
+        }
+      );
+    });
+  }
+
+  // Ищет открытую вкладку портала и читает JWT из её localStorage.
+  // Если вкладки портала нет — пробует активную вкладку как запасной вариант.
   function getJwtFromTab() {
     return new Promise(function (resolve) {
-      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        if (!tabs || !tabs[0]) { resolve(null); return; }
-
-        chrome.scripting.executeScript(
-          {
-            target: { tabId: tabs[0].id },
-            func: function (keys) {
-              for (var i = 0; i < keys.length; i++) {
-                var val = localStorage.getItem(keys[i]);
-                if (val && val.length > 20) return val;
-              }
-              for (var j = 0; j < localStorage.length; j++) {
-                var k = localStorage.key(j);
-                if (k && k.toLowerCase().indexOf("token") !== -1) {
-                  var v = localStorage.getItem(k);
-                  if (v && v.length > 20) return v;
-                }
-              }
-              return null;
-            },
-            args: [ESM_TOKEN_KEYS],
-          },
-          function (results) {
-            if (chrome.runtime.lastError || !results || !results[0]) {
-              resolve(null);
-            } else {
-              resolve(results[0].result || null);
-            }
-          }
-        );
+      chrome.tabs.query({ url: PORTAL_URL_PATTERN }, function (portalTabs) {
+        if (portalTabs && portalTabs[0]) {
+          readJwtFromTabId(portalTabs[0].id).then(resolve);
+          return;
+        }
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+          if (!tabs || !tabs[0]) { resolve(null); return; }
+          readJwtFromTabId(tabs[0].id).then(resolve);
+        });
       });
     });
   }
+
+  // --- Индикатор авторизации ---
+
+  function setAuthState(state) {
+    // state: "checking" | "ok" | "fail"
+    authDot.classList.remove("ok", "fail");
+    authLabel.classList.remove("ok", "fail");
+
+    if (state === "ok") {
+      authDot.classList.add("ok");
+      authLabel.classList.add("ok");
+      authLabel.textContent = "ACS авторизован";
+      authLoginBtn.classList.add("hidden");
+    } else if (state === "fail") {
+      authDot.classList.add("fail");
+      authLabel.classList.add("fail");
+      authLabel.textContent = "ACS не авторизован";
+      authLoginBtn.classList.remove("hidden");
+    } else {
+      authLabel.textContent = "Проверка авторизации ACS…";
+      authLoginBtn.classList.add("hidden");
+    }
+  }
+
+  // Проверяет наличие валидной сессии ACS через реальный API-эндпоинт.
+  // Шлём POST с пустым JSON-телом: сервер до прикладной логики валидирует
+  // авторизацию. Логика интерпретации ответа:
+  //   - 401 / 403                          → сессии нет
+  //   - Content-Type содержит text/html    → сессии нет (отдали HTML логина)
+  //   - финальный URL содержит /login      → редирект на логин-страницу
+  //   - всё остальное (JSON 2xx или 4xx)   → сессия валидна, ошибка прикладного
+  //                                          уровня (например, 400 на пустом теле)
+  function checkAcsAuth() {
+    return fetch(ACS_AUTH_PROBE_URL, {
+      method: "POST",
+      credentials: "include",
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+      body: "{}",
+    })
+      .then(function (r) {
+        if (r.status === 401 || r.status === 403) return false;
+        var ct = (r.headers.get("content-type") || "").toLowerCase();
+        if (ct.indexOf("text/html") !== -1) return false;
+        var u = (r.url || "").toLowerCase();
+        if (u.indexOf("/login") !== -1 || u.indexOf("signin") !== -1) return false;
+        return true;
+      })
+      .catch(function () { return false; });
+  }
+
+  function checkAuth() {
+    setAuthState("checking");
+    checkAcsAuth().then(function (ok) {
+      setAuthState(ok ? "ok" : "fail");
+    });
+  }
+
+  authLoginBtn.addEventListener("click", function () {
+    chrome.tabs.create({ url: ACS_LEGACY_UI_URL });
+  });
+
+  // Клик по лейблу — ручное обновление статуса (на случай, если только что
+  // переавторизовались и хочется убедиться, что сессия валидна).
+  authLabel.addEventListener("click", function () {
+    checkAuth();
+  });
+  authLabel.title = "Кликните для повторной проверки";
+
+  checkAuth();
 
   // --- ESM: двухшаговая проверка ---
 
