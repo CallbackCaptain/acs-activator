@@ -29,6 +29,22 @@
   const authLabel    = document.getElementById("authLabel");
   const authLoginBtn = document.getElementById("authLoginBtn");
 
+  // Expand to tab
+  const expandBtn = document.getElementById("expandBtn");
+
+  // В режиме отдельной вкладки скрываем кнопку «развернуть» и расширяем layout.
+  var isExpandedTab = new URLSearchParams(window.location.search).get("expanded") === "1";
+  if (isExpandedTab) {
+    document.body.classList.add("expanded");
+    expandBtn.classList.add("hidden");
+  }
+
+  expandBtn.addEventListener("click", function () {
+    var url = chrome.runtime.getURL("popup.html") + "?expanded=1";
+    chrome.tabs.create({ url: url });
+    window.close();
+  });
+
   var PORTAL_URL_PATTERN  = "http://lo.sibir.rt.ru/*";
 
   // ACS LEGACYUI — открытие этой страницы триггерит переавторизацию в ACS.

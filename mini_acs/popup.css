@@ -26,6 +26,45 @@ body {
   letter-spacing: 0.02em;
 }
 
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.btn-icon {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: #6c7086;
+  border: 1px solid #45475a;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 0.12s, border-color 0.12s, background 0.12s;
+}
+
+.btn-icon:hover:not(:disabled) {
+  background: transparent;
+  color: #cdd6f4;
+  border-color: #6c7086;
+}
+
+/* В режиме отдельной вкладки растягиваем контейнер и центрируем */
+body.expanded {
+  min-width: 0;
+}
+
+body.expanded .container {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 24px 20px;
+}
+
 .field {
   display: flex;
   flex-direction: column;
